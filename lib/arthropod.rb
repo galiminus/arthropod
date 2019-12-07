@@ -1,0 +1,1 @@
+require 'arthropod/client'

@@ -17,5 +17,11 @@ Gem::Specification.new do |gem|
 
   gem.licenses      = ["MIT"]
 
+  gem.add_dependency 'aws-sdk-sqs'
+
   gem.required_ruby_version = "~> 2.0"
+
+  gem.add_development_dependency 'bundler'
+  gem.add_development_dependency 'rspec'
+  gem.add_development_dependency 'rake'
 end
