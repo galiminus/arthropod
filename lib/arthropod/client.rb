@@ -20,7 +20,7 @@ module Arthropod
             if response.state == "close"
               return response
             else
-              yield response
+              yield response if block_given?
             end
           ensure
             client.delete_message(queue_url: return_queue.queue_url, receipt_handle: message.receipt_handle)
