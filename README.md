@@ -25,11 +25,11 @@ Arthropod::Server.pull(queue_name: "video_encoding") do |request|
   # Do the encoding stuff
   encoded_video_url = VideoEncoder.encode(video_url)
 
-  encoded_video_url # Everything evaluated here will be sent to the client
+  encoded_video_url # Everything evaluated here will be sent back to the client
 end
 ```
 
-As you see, it's all synchronous, and since SQS will save your message until they are consumed your server doesn't even have to be listening right when you push the task (more on that later).
+As you see, it's all synchronous and, since SQS will save your messages until they are consumed, your server doesn't even have to be listening right when you push the task (more on that later).
 
 It is also possible to push updates from the server:
 
@@ -42,7 +42,7 @@ Arthropod::Server.pull(queue_name: "video_encoding") do |request|
     request.respond { percentage_of_completion: percentage_of_completion }
   end
 
-  encoded_video_url # Everything evaluated here will be sent to the client
+  encoded_video_url # Everything evaluated here will be sent back to the client
 end
 ```
 
@@ -66,7 +66,7 @@ response = Arthropod::Client.push(queue_name: "video_encoding", body: { url: url
 end
 ```
 
-This method push a job to the SQS queue `queue_name` and waits for the job completion, a block can be optionally provided if you expect the server to send you some update along the way. The return value is the last value evaluated in the server block.
+This method pushes a job to the SQS queue `queue_name` and waits for the job completion, a block can be optionally provided if you expect the server to send you some updates along the way. The return value is the last value evaluated in the server block.
 
 ```ruby
 Arthropod::Server.pull(queue_name: "video_encoding") do |request|
