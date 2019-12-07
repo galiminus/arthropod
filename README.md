@@ -18,7 +18,7 @@ gem 'arthropod', '~> 0.0.1'
 
 ## Configuration
 
-You will the following environment variables `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_REGION`. Optionally the `Arthropod::Client.push` and `Arthropod::Server.pull` can take a `client` argument with your own instance of `Aws::SQS::Client`, see [https://docs.aws.amazon.com/en_en/sdk-for-ruby/v3/developer-guide/sqs-examples.html] for more information.
+You will need the following environment variables `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_REGION`. Optionally the `Arthropod::Client.push` and `Arthropod::Server.pull`  methods can take a `client` argument with your own instance of `Aws::SQS::Client`, see https://docs.aws.amazon.com/en_en/sdk-for-ruby/v3/developer-guide/sqs-examples.html for more information.
 
 ## Usage
 
