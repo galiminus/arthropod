@@ -3,7 +3,7 @@ require 'securerandom'
 
 module Arthropod
   module Client
-    def self.push(queue_name:, body:, client: nil, timeout: nil)
+    def self.push(queue_name:, body:, client: nil)
       client ||= Aws::SQS::Client.new
 
       sender_queue = client.create_queue(queue_name: queue_name)
