@@ -1,54 +1,7 @@
 require 'arthropod'
 
 RSpec.describe(Arthropod::Client) do
-  context "#configure" do
-    before(:each) do
-      ENV["AWS_ACCESS_KEY_ID"] = "my_access_key_id"
-      ENV["AWS_SECRET_ACCESS_KEY"] = "my_secret_access_key"
-      ENV["AWS_REGION"] = "my_region"
-    end
-
-    after(:each) do
-      ENV.delete "AWS_ACCESS_KEY_ID"
-      ENV.delete "AWS_SECRET_ACCESS_KEY"
-      ENV.delete "AWS_REGION"
-    end
-
-    it "should take credentials from environment" do
-      expect(Arthropod::Client.access_key_id).to eq("my_access_key_id")
-      expect(Arthropod::Client.secret_access_key).to eq("my_secret_access_key")
-      expect(Arthropod::Client.region).to eq("my_region")
-    end
-
-    it "can take credentials from #configure" do
-      Arthropod::Client.configure({
-        access_key_id: "custom_access_key_id",
-        secret_access_key: "custom_secret_access_key",
-        region: "custom_region",
-      })
-      expect(Arthropod::Client.access_key_id).to eq("custom_access_key_id")
-      expect(Arthropod::Client.secret_access_key).to eq("custom_secret_access_key")
-      expect(Arthropod::Client.region).to eq("custom_region")
-    end
-  end
-
   context "#push" do
-    before(:each) do
-      Arthropod::Client.configure({
-        access_key_id: "custom_access_key_id",
-        secret_access_key: "custom_secret_access_key",
-        region: "custom_region",
-      })
-    end
-
-    after(:each) do
-      Arthropod::Client.configure({
-        access_key_id: nil,
-        secret_access_key: nil,
-        region: nil
-      })
-    end
-
     let(:client) do
       Aws::SQS::Client.new(stub_responses: true)
     end

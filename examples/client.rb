@@ -1,9 +1,11 @@
 require 'arthropod'
 
-source = "https://oceanwide-4579.kxcdn.com/uploads/media-dynamic/cache/jpg_optimize/uploads/media/default/0001/16/thumb_15073_default_1600.jpeg"
+loop do
+  text = gets
+  break if text.strip == "quit"
 
-Arthropod::Client.push(queue_name: "my_little_queue", payload: { source: source }) do |message|
-  if message["state"] == "completed"
-    break
+  response = Arthropod::Client.push(queue_name: "my_little_queue", payload: { text: text }) do |response|
+    puts "Downcase: #{response.payload}"
   end
+  puts "Upcase: #{response.payload}"
 end
