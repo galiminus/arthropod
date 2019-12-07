@@ -3,14 +3,14 @@ require 'securerandom'
 
 module Arthropod
   module Client
-    def self.push(queue_name:, payload:, client: nil, timeout: nil)
+    def self.push(queue_name:, body:, client: nil, timeout: nil)
       client ||= Aws::SQS::Client.new
 
       sender_queue = client.create_queue(queue_name: queue_name)
       return_queue = client.create_queue(queue_name: SecureRandom.uuid.gsub("-", "_"))
 
       # Send our order with a return queue so we can get responses
-      client.send_message(queue_url: sender_queue.queue_url, message_body: JSON.dump({ return_queue_url: return_queue.queue_url, payload: payload }))
+      client.send_message(queue_url: sender_queue.queue_url, message_body: JSON.dump({ return_queue_url: return_queue.queue_url, body: body }))
 
       loop do
         response = client.receive_message(queue_url: return_queue.queue_url, max_number_of_messages: 1, wait_time_seconds: 1)

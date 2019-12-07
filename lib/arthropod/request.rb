@@ -7,24 +7,24 @@ module Arthropod
       @message = message
     end
 
-    def payload
-      body["payload"]
+    def body
+      parsed_message_body["body"]
     end
 
     def return_queue_url
-      body["return_queue_url"]
+      parsed_message_body["return_queue_url"]
     end
 
     def state
-      body["state"]
+      parsed_message_body["state"]
     end
 
-    def respond(payload = nil)
-      send_message({ state: "open", payload: payload })
+    def respond(body = nil)
+      send_message({ state: "open", body: body })
     end
 
-    def close(payload = nil)
-      send_message({ state: "close", payload: payload })
+    def close(body = nil)
+      send_message({ state: "close", body: body })
     end
 
     private
@@ -36,8 +36,8 @@ module Arthropod
       })
     end
 
-    def body
-      @body ||= JSON.parse(message.body)
+    def parsed_message_body
+      @parsed_message_body ||= JSON.parse(message.body)
     end
   end
 end

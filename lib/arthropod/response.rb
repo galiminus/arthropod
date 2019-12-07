@@ -7,18 +7,18 @@ module Arthropod
       @message = message
     end
 
-    def payload
-      body["payload"]
+    def body
+      parsed_message_body["body"]
     end
 
     def state
-      body["state"]
+      parsed_message_body["state"]
     end
 
     private
 
-    def body
-      @body ||= JSON.parse(message.body)
+    def parsed_message_body
+      @parsed_message_body ||= JSON.parse(message.body)
     end
   end
 end

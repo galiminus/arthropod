@@ -14,7 +14,7 @@ RSpec.describe(Arthropod::Client) do
       "https://aws.com/return_queue_url"
     end
 
-    let(:payload) do
+    let(:body) do
       { my_key: "my_value" }
     end
 
@@ -22,7 +22,7 @@ RSpec.describe(Arthropod::Client) do
       "444444444444-4444-4444-8888-88888888"
     end
 
-    it "works" do
+    before(:each) do
       expect(SecureRandom).to(
         receive(:uuid)
           .and_return(uuid)
@@ -39,23 +39,29 @@ RSpec.describe(Arthropod::Client) do
       )
       expect(client).to(
         receive(:send_message)
-        .with({ queue_url: sender_queue_url, message_body: JSON.dump({ return_queue_url: return_queue_url, payload: payload }) })
+        .with({ queue_url: sender_queue_url, message_body: JSON.dump({ return_queue_url: return_queue_url, body: body }) })
       )
       expect(client).to(
         receive(:receive_message)
         .with({ queue_url: return_queue_url, max_number_of_messages: 1, wait_time_seconds: 1 })
-        .and_return(OpenStruct.new(messages: [{ "state" => "completed" }]))
+        .and_return(OpenStruct.new(messages: [ OpenStruct.new({ "body" => JSON.dump({ "state" => "open", "body" => "update" }), receipt_handle: "receipt_handle" }) ]))
+      )
+      expect(client).to(
+        receive(:receive_message)
+        .with({ queue_url: return_queue_url, max_number_of_messages: 1, wait_time_seconds: 1 })
+        .and_return(OpenStruct.new(messages: [ OpenStruct.new({ "body" => JSON.dump({ "state" => "close", "body" => "payload" }), receipt_handle: "receipt_handle" }) ]))
       )
       expect(client).to(
         receive(:delete_queue)
         .with({ queue_url: return_queue_url })
       )
+    end
 
-      Arthropod::Client.push(client: client, queue_name: "test", payload: payload) do |message|
-        if message["state"] == "completed"
-          break
-        end
+    it "works" do
+      response = Arthropod::Client.push(client: client, queue_name: "test", body: body) do |response|
+        expect(response.body).to eq("update")
       end
+      expect(response.body).to eq("payload")
     end
   end
 end
