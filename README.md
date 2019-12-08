@@ -36,7 +36,7 @@ On the "server" side:
 
 ```ruby
 Arthropod::Server.pull(queue_name: "video_encoding") do |request|
-  video_url = request.body.url
+  video_url = request.body["url"]
 
   # Do the encoding stuff
   encoded_video_url = VideoEncoder.encode(video_url)
