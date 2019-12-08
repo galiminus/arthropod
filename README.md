@@ -105,4 +105,4 @@ Of course you can also achieve that by simply using SQS or any kind of message s
 
 ## Example: the poor man's video encoding service
 
-If you're not concerned about latency, you can for example push some heavy video encoding task from and ActiveJob job in your Rails task and run a little cron job every minute on your uber-CUDA-powered computer at home to pull those jobs and reencode your videos. It should be reliable enough and it may be even be way faster than doing it with the CPU off a regular server.
+If you're not concerned about latency, you can for example push some heavy video encoding task from and ActiveJob job in your Rails task and run a little cron job every minute on your uber-CUDA-powered computer at home to pull those jobs and reencode your videos. It should be reliable enough and it may be even be way faster than doing it with the CPU of a regular server.
