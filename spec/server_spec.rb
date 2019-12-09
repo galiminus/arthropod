@@ -29,6 +29,9 @@ RSpec.describe(Arthropod::Server) do
         .with({ queue_url: sender_queue_url, max_number_of_messages: 1, wait_time_seconds: 1 })
         .and_return(OpenStruct.new(messages: [ OpenStruct.new({ "body" => JSON.dump({ "body" => "request", "return_queue_url" => return_queue_url }), receipt_handle: "receipt_handle" }) ]))
       )
+    end
+
+    it "works" do
       expect(client).to(
         receive(:send_message)
         .with({ queue_url: return_queue_url, message_body: JSON.dump({ state: "open", body: "response" }) })
@@ -37,15 +40,26 @@ RSpec.describe(Arthropod::Server) do
         receive(:send_message)
         .with({ queue_url: return_queue_url, message_body: JSON.dump({ state: "close", body: "final_response" }) })
       )
-    end
 
-    it "works" do
       Arthropod::Server.pull(client: client, queue_name: "test") do |request|
         expect(request.body).to eq("request")
         request.respond "response"
 
         "final_response"
       end
+    end
+
+    it "send error on exception" do
+      expect(client).to(
+        receive(:send_message)
+        .with({ queue_url: return_queue_url, message_body: JSON.dump({ state: "error", body: nil }) })
+      )
+
+      expect do
+        Arthropod::Server.pull(client: client, queue_name: "test") do |request|
+          raise "error"
+        end
+      end.to raise_error(Exception)
     end
   end
 end

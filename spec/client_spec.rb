@@ -42,6 +42,13 @@ RSpec.describe(Arthropod::Client) do
         .with({ queue_url: sender_queue_url, message_body: JSON.dump({ return_queue_url: return_queue_url, body: body }) })
       )
       expect(client).to(
+        receive(:delete_queue)
+        .with({ queue_url: return_queue_url })
+      )
+    end
+
+    it "works" do
+      expect(client).to(
         receive(:receive_message)
         .with({ queue_url: return_queue_url, max_number_of_messages: 1, wait_time_seconds: 1 })
         .and_return(OpenStruct.new(messages: [ OpenStruct.new({ "body" => JSON.dump({ "state" => "open", "body" => "update" }), receipt_handle: "receipt_handle" }) ]))
@@ -51,17 +58,21 @@ RSpec.describe(Arthropod::Client) do
         .with({ queue_url: return_queue_url, max_number_of_messages: 1, wait_time_seconds: 1 })
         .and_return(OpenStruct.new(messages: [ OpenStruct.new({ "body" => JSON.dump({ "state" => "close", "body" => "payload" }), receipt_handle: "receipt_handle" }) ]))
       )
-      expect(client).to(
-        receive(:delete_queue)
-        .with({ queue_url: return_queue_url })
-      )
-    end
-
-    it "works" do
       response = Arthropod::Client.push(client: client, queue_name: "test", body: body) do |response|
         expect(response.body).to eq("update")
       end
       expect(response.body).to eq("payload")
+    end
+
+    it "should raise on error" do
+      expect(client).to(
+        receive(:receive_message)
+        .with({ queue_url: return_queue_url, max_number_of_messages: 1, wait_time_seconds: 1 })
+        .and_return(OpenStruct.new(messages: [ OpenStruct.new({ "body" => JSON.dump({ "state" => "error" }), receipt_handle: "receipt_handle" }) ]))
+      )
+      expect do
+        Arthropod::Client.push(client: client, queue_name: "test", body: body)
+      end.to raise_error(Arthropod::Client::ServerError)
     end
   end
 end

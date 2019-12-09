@@ -3,6 +3,8 @@ require 'securerandom'
 
 module Arthropod
   module Client
+    class ServerError < StandardError; end
+
     def self.push(queue_name:, body:, client: nil)
       client ||= Aws::SQS::Client.new
 
@@ -19,6 +21,8 @@ module Arthropod
           begin
             if response.state == "close"
               return response
+            elsif response.state == "error"
+              raise Arthropod::Client::ServerError
             else
               yield response if block_given?
             end

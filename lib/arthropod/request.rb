@@ -23,8 +23,12 @@ module Arthropod
       send_message({ state: "open", body: body })
     end
 
-    def close(body = nil)
+    def close!(body = nil)
       send_message({ state: "close", body: body })
+    end
+
+    def error!(body = nil)
+      send_message({ state: "error", body: body })
     end
 
     private

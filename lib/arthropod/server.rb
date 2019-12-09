@@ -10,7 +10,10 @@ module Arthropod
       response.messages.each do |message|
         request = Arthropod::Request.new(client: client, message: message)
         begin
-          request.close(yield request)
+          request.close!(yield request)
+        rescue => error
+          request.error!
+          raise error
         ensure
           client.delete_message(queue_url: sender_queue.queue_url, receipt_handle: message.receipt_handle)
         end

@@ -74,6 +74,10 @@ puts response.body
 # => "https://my_storage.my_service.com/my_reencoded_video_file.mp4"
 ```
 
+## Errors
+
+Any exception raised on server side will cause the client side to close immediately and raise a `Arthropod::Client::ServerError` exception.
+
 ## API
 
 ```ruby
