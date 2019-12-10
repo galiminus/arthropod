@@ -1,6 +1,6 @@
 # Arthropod
 
-Arthropod is a easy way to run remote ruby code synchronously, using Amazon SQS.
+Arthropod is an easy way to run remote ruby code synchronously, using Amazon SQS.
 
 *Do not use it yet, the API isn't stable at all and it wasn't tested enough on production*
 
@@ -13,7 +13,7 @@ gem install arthropod
 Or in your Gemfile
 
 ```
-gem 'arthropod', '~> 0.0.1'
+gem 'arthropod', '~> 0.0.2'
 ```
 
 ## Configuration
