@@ -15,7 +15,7 @@ module Arthropod
       client.send_message(queue_url: sender_queue.queue_url, message_body: JSON.dump({ return_queue_url: return_queue.queue_url, body: body }))
 
       loop do
-        response = client.receive_message(queue_url: return_queue.queue_url, max_number_of_messages: 1, wait_time_seconds: 1)
+        response = client.receive_message(queue_url: return_queue.queue_url, max_number_of_messages: 1, wait_time_seconds: 60)
         response.messages.each do |message|
           response = Arthropod::Response.new(client: client, message: message)
           begin
