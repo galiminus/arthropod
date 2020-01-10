@@ -6,7 +6,7 @@ module Arthropod
       client ||= Aws::SQS::Client.new
 
       sender_queue = client.create_queue(queue_name: queue_name)
-      response = client.receive_message(queue_url: sender_queue.queue_url, max_number_of_messages: 1, wait_time_seconds: 1)
+      response = client.receive_message(queue_url: sender_queue.queue_url, max_number_of_messages: 1, wait_time_seconds: 20)
       response.messages.each do |message|
         request = Arthropod::Request.new(client: client, message: message)
         begin
