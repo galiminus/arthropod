@@ -9,7 +9,9 @@ module Arthropod
       client ||= Aws::SQS::Client.new
 
       sender_queue = client.create_queue(queue_name: queue_name)
-      return_queue = client.create_queue(queue_name: SecureRandom.uuid.gsub("-", "_"))
+      return_queue = client.create_queue(queue_name: "#{SecureRandom.hex(32)}.fifo", attributes: {
+        'FifoQueue' => "true",
+      })
 
       # Send our order with a return queue so we can get responses
       client.send_message(queue_url: sender_queue.queue_url, message_body: JSON.dump({ return_queue_url: return_queue.queue_url, body: body }))

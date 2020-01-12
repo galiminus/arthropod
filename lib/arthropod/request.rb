@@ -1,10 +1,14 @@
+require 'digest'
+
 module Arthropod
   class Request
-    attr_reader :message, :client
+    attr_reader :message, :client, :message_group_id
 
     def initialize(client:, message:)
       @client = client
       @message = message
+      @message_group_id = Digest::SHA1.hexdigest(return_queue_url)
+      @sequence = 0
     end
 
     def body
@@ -36,8 +40,14 @@ module Arthropod
     def send_message(message_body)
       client.send_message({
         queue_url: return_queue_url,
-        message_body: JSON.dump(message_body)
+        message_body: JSON.dump(message_body),
+        message_group_id: message_group_id,
+        message_deduplication_id: message_deduplication_id
       })
+    end
+
+    def message_deduplication_id
+      "sequence:#{@sequence += 1}"
     end
 
     def parsed_message_body
